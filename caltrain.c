@@ -45,8 +45,7 @@ void
 station_wait_for_train(struct station *station)
 {
 	lock_acquire(&station->lock);
-	//Thoi gian cho tau den tang len 1
-	
+	//Thoi gian cho tau den tang len 1	
 	station->waiting ++;
 
 	while (station->seats == 0)
@@ -60,8 +59,8 @@ station_wait_for_train(struct station *station)
 	station->boarding ++;
 	station->seats --;
 	station->waiting --;
-	printf("wait for train %d\n", station->seats);
-	printf("wait for train %d\n", station->waiting);
+	// printf("wait for train %d\n", station->seats);
+	// printf("wait for train %d\n", station->waiting);
 	lock_release(&station->lock);
 }
 
