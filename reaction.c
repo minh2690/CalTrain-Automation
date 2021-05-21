@@ -6,11 +6,11 @@
 void make_water();
 
 struct reaction {
-	int h;
+	int h;// Khoi tao nguyen tu H
 
-	struct lock lock;
-	struct condition h_full;
-	struct condition wait_done;
+	struct lock lock; // Khoa lock
+	struct condition h_full; // Bien dieu kien co du nguyen tu H
+	struct condition wait_done; // Bien dieu kien giai phong 2 nguyen tu H
 };
 
 void
@@ -27,7 +27,9 @@ reaction_h(struct reaction *reaction)
 {
 	lock_acquire(&reaction->lock);
 	reaction->h ++;
+	// Gui tin hieu thong bao H da du
 	cond_signal(&reaction->h_full, &reaction->lock);
+	// Cho phan ung xong de release
 	cond_wait(&reaction->wait_done, &reaction->lock);
 	lock_release(&reaction->lock);
 }
@@ -36,12 +38,17 @@ void
 reaction_o(struct reaction *reaction)
 {
 	lock_acquire(&reaction->lock);
-	while (reaction->h < 2)
+	// Kiem tra dieu kien neu nguyen tu H it hon 2 thi di ngu
+	while(reaction->h < 2)
 	{
 		cond_wait(&reaction->h_full, &reaction->lock);
 	}
-	reaction->h -= 2;
+	// Phuong thuc make_water
 	make_water();
+	// Khi phan ung xong giam H di 2
+	reaction->h -= 2;
+
+	// Gui 2 tin hieu de giai phong hai thread H
 	cond_signal(&reaction->wait_done, &reaction->lock);
 	cond_signal(&reaction->wait_done, &reaction->lock);
 	lock_release(&reaction->lock);
